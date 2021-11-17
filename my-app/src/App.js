@@ -1,16 +1,36 @@
 import './App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Todo from './Todo';
+import db from './firebase';
+import firebase from 'firebase/app'
+
 
 function App() {
   const [input,setinput]=useState("")
-  const [todos, settodos] = useState(["a","b"]);
+  const [todos, settodos] = useState([]);
+
+  // when the app loads we need to listen the db and fetch new todo when added/deleted with the help of useeffect
+
+  useEffect(() => {
+    // this code runs when app loads
+    db.collection("todos").orderBy('timestamp','desc').onSnapshot(snapshot=>{
+      // console.log(snapshot.docs.map(doc=>doc))
+      settodos(snapshot.docs.map(doc=>({id:doc.id,todo:doc.data().todo})))
+    })
+  }, [])
+
   const addtodos=(e)=>{
-    // console.log(todos)
     e.preventDefault();
+    db.collection("todos").add({
+      todo:input,
+      timestamp:firebase.firestore.FieldValue.serverTimestamp()
+    })
     settodos([...todos,input])
-    setinput("")
+    setinput("")//clear input field after clicking the button
   }
+
+
+
   return (
     <div className="App">
       <form action="">
