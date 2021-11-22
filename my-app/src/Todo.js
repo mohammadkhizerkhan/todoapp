@@ -29,6 +29,11 @@ function Todo(props) {
         },{merge:true})
         setopen(false)
     }
+
+    const deleteTodo=(e)=>{
+        db.collection("todos").doc(props.item.id).delete();
+        // db.collection("dates").doc(props.d.id).delete();
+    }
     return (
         <>
         <Modal isOpen={open} onRequestClose={()=>setopen(false)} style={modalStyle}>
@@ -40,7 +45,7 @@ function Todo(props) {
             <li>
                 {props.item.todo}
                 <button id="edit-btn" onClick={(e)=>setopen(true)}>edit</button>
-                <button id="btn-delete" onClick={e=>db.collection("todos").doc(props.item.id).delete()}>delete</button>
+                <button id="btn-delete" onClick={deleteTodo}>delete</button>
             </li>
         </div>
         </>
