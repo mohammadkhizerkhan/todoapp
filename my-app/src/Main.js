@@ -19,7 +19,7 @@ function Main() {
     useEffect(() => {
       // this code runs when app loads
       db.collection("todos").orderBy('timestamp','desc').onSnapshot(snapshot=>{
-        // console.log(snapshot.docs.map(doc=>doc))
+        console.log(snapshot.docs.map(doc=>doc.data()))
         settodos(snapshot.docs.map(doc=>({id:doc.id,todo:doc.data()})))
       })
     }, [])
@@ -27,7 +27,7 @@ function Main() {
     const addtodos=(e)=>{
       e.preventDefault();
       db.collection("todos").add({
-        todo:todos,
+        todo:JSON.stringify(todo),
         timestamp:firebase.firestore.FieldValue.serverTimestamp()
       })
       
@@ -61,7 +61,7 @@ function Main() {
         {
           todos.map((todo)=>{
             return(
-              <Todo item={todo}/>
+              <Todo item={JSON.stringify(todo)}/>
             )
           })
         }
