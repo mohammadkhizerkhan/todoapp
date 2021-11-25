@@ -19,20 +19,22 @@ function Main() {
     useEffect(() => {
       // this code runs when app loads
       db.collection("todos").orderBy('timestamp','desc').onSnapshot(snapshot=>{
-        console.log(snapshot.docs.map(doc=>doc.data()))
-        settodos(snapshot.docs.map(doc=>({id:doc.id,todo:doc.data()})))
+        // console.log(snapshot.docs.map(doc=>doc.data().todo))
+        settodos(snapshot.docs.map(doc=>({id:doc.id,todo:doc.data().todo})))
       })
     }, [])
     
     const addtodos=(e)=>{
       e.preventDefault();
       db.collection("todos").add({
+        // this json.stringify is important
         todo:JSON.stringify(todo),
         timestamp:firebase.firestore.FieldValue.serverTimestamp()
       })
       
       settodos([...todos,todo])
       settodo("")//clear input field after clicking the button
+      console.log(todos)
     }
     return (
         <div>
@@ -61,7 +63,7 @@ function Main() {
         {
           todos.map((todo)=>{
             return(
-              <Todo item={JSON.stringify(todo)}/>
+              <Todo key={todo} item={todo}/>
             )
           })
         }
