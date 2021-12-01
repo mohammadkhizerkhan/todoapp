@@ -4,8 +4,9 @@ import Modal from 'react-modal';
 Modal.setAppElement("#root")
 function Todo(props) {
     const [open, setopen] = useState(false);
-    const [input, setinput] = useState("")
-
+    const [todoName, setTodoName] = useState("")
+    const [todoDate, setTodoDate] = useState(); 
+    const [todoTime, setTodoTime] = useState(); 
     const modalStyle={
         content: {
             top: '25%',
@@ -24,8 +25,10 @@ function Todo(props) {
     }
     
     const updateTodo=(e)=>{
-        db.collection("todos").doc(props.item.id).set({
-            todo:input
+        db.collection("todos").doc(props.id).update({
+            todo:todoName,
+            date:todoDate,
+            time:todoTime,
         },{merge:true})
         setopen(false)
     }
@@ -37,7 +40,9 @@ function Todo(props) {
         <>
         <Modal isOpen={open} onRequestClose={()=>setopen(false)} style={modalStyle}>
                     <h3>you can edit</h3>
-                    <input type="text" value={input} onChange={(e)=>setinput(e.target.value)} placeholder={props.item.todo}/>
+                    <input type="text" value={todoName} onChange={(e)=>setTodoName(e.target.value)} placeholder={props.item}/>
+                    <input type="date" onChange={(e) => {setTodoDate(e.target.value.split("T")[0]);}}/>
+                    <input type="time" onChange={(e) => {setTodoTime(e.target.value.split("T")[0]);}}/>
                     <button id="modal-btn" onClick={updateTodo}>update</button>
         </Modal>
         <div>
