@@ -32,7 +32,7 @@ function Todo(props) {
 
     const deleteTodo=(e)=>{
         db.collection("todos").doc(props.item.id).delete();
-        // db.collection("dates").doc(props.d.id).delete();
+        console.log(db.collection("todos").doc(props.item))
     }
     return (
         <>
@@ -43,7 +43,7 @@ function Todo(props) {
         </Modal>
         <div>
             <li>
-                {props.item.todo}
+                {props.item}&nbsp;{props.date}&nbsp;{props.time}
                 <button id="edit-btn" onClick={(e)=>setopen(true)}>edit</button>
                 <button id="btn-delete" onClick={deleteTodo}>delete</button>
             </li>

@@ -7,20 +7,22 @@ import firebase from 'firebase/app'
 import React from 'react'
 
 function Main() {
-    const [todo, settodo] = useState({
-        todoname: "",
-        tododate: "",
-        todotime: ""
-      }); 
+    const [todoName, setTodoName] = useState(""); 
+    const [todoDate, setTodoDate] = useState(); 
+    const [todoTime, setTodoTime] = useState(); 
     
-    const [todos, settodos] = useState([]);
+    const [todos, settodos] = useState([{
+      todo:"xyz",
+      date:"2021-12-10",
+      time:"18:33"
+    }]);
     // when the app loads we need to listen the db and fetch new todo when added/deleted with the help of useeffect
   
     useEffect(() => {
       // this code runs when app loads
       db.collection("todos").orderBy('timestamp','desc').onSnapshot(snapshot=>{
-        // console.log(snapshot.docs.map(doc=>doc.data().todo))
-        settodos(snapshot.docs.map(doc=>({id:doc.id,todo:doc.data().todo})))
+        // console.log(snapshot.docs.map(doc=>doc.data()))
+        settodos(snapshot.docs.map(doc=>({...doc.data()})))
       })
     }, [])
     
@@ -28,12 +30,15 @@ function Main() {
       e.preventDefault();
       db.collection("todos").add({
         // this json.stringify is important
-        todo:JSON.stringify(todo),
+        todo:todoName,
+        date:todoDate,
+        time:todoTime,
         timestamp:firebase.firestore.FieldValue.serverTimestamp()
       })
       
-      settodos([...todos,todo])
-      settodo("")//clear input field after clicking the button
+      // settodos([...todos,todo])
+      setTodoName("")//clear input field after clicking the button
+      
       console.log(todos)
     }
     return (
@@ -41,29 +46,29 @@ function Main() {
             <form action="">
             <input
         type="text"
-        value={todo.todoname}
-        onChange={(e) => settodo({ ...todo, todoname: e.target.value })}
+        value={todoName}
+        onChange={(e) => setTodoName(e.target.value)}
       />
       <input
         type="date"
         onChange={(e) => {
-          settodo({ ...todo, tododate: e.target.value.split("T")[0] });
+          setTodoDate(e.target.value.split("T")[0]);
         }}
       />
       <input
         type="time"
         onChange={(e) => {
-          settodo({ ...todo, todotime: e.target.value.split("T")[0] });
+          setTodoTime(e.target.value.split("T")[0]);
         }}
       />
      
-      <button id="btn" type="submit" disabled={!todo} onClick={addtodos}>add</button>
+      <button id="btn" type="submit" disabled={!todoName} onClick={addtodos}>add</button>
       </form>
       <ul>
         {
-          todos.map((todo)=>{
+          todos.map((doc)=>{
             return(
-              <Todo key={todo} item={todo}/>
+              <Todo key={doc.todo} item={doc.todo} date={doc.date} time={doc.time} />
             )
           })
         }
