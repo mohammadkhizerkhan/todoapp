@@ -31,8 +31,7 @@ function Todo(props) {
     }
 
     const deleteTodo=(e)=>{
-        db.collection("todos").doc(props.item.id).delete();
-        console.log(db.collection("todos").doc(props.item))
+        db.collection("todos").doc(props.id).delete();
     }
     return (
         <>

@@ -12,17 +12,20 @@ function Main() {
     const [todoTime, setTodoTime] = useState(); 
     
     const [todos, settodos] = useState([{
+      id:"abc",
       todo:"xyz",
       date:"2021-12-10",
-      time:"18:33"
+      time:"18:33",
     }]);
     // when the app loads we need to listen the db and fetch new todo when added/deleted with the help of useeffect
   
     useEffect(() => {
       // this code runs when app loads
       db.collection("todos").orderBy('timestamp','desc').onSnapshot(snapshot=>{
-        // console.log(snapshot.docs.map(doc=>doc.data()))
-        settodos(snapshot.docs.map(doc=>({...doc.data()})))
+        // console.log(snapshot.docs.map(doc=>({id:doc.id,...doc.data()})))
+        // here we are capturing whatever changes happen in db using onSnapshot
+        // after capturing we are setting our todos by taking from firebase to show in view or to do operate in local program 
+        settodos(snapshot.docs.map(doc=>({id:doc.id,...doc.data()})))
       })
     }, [])
     
@@ -35,11 +38,8 @@ function Main() {
         time:todoTime,
         timestamp:firebase.firestore.FieldValue.serverTimestamp()
       })
-      
-      // settodos([...todos,todo])
       setTodoName("")//clear input field after clicking the button
-      
-      console.log(todos)
+      // console.log(todos)
     }
     return (
         <div>
@@ -68,7 +68,7 @@ function Main() {
         {
           todos.map((doc)=>{
             return(
-              <Todo key={doc.todo} item={doc.todo} date={doc.date} time={doc.time} />
+              <Todo key={doc.todo} item={doc.todo} date={doc.date} time={doc.time} id={doc.id}/>
             )
           })
         }
